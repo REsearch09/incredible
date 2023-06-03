@@ -1,36 +1,29 @@
-from settings import settings
+import random
 import discord
-# import * - is a quick way to import all files in the library
-from bot_logic import *
-
-# The intents variable stores the bot's priviliges
+from discord.ext import commands
+from passwordBot import password0
 intents = discord.Intents.default()
-# Enabling the message-reading privelege
 intents.message_content = True
-# Creating a bot in the client variable and transferring it the priveleges
-client = discord.Client(intents=intents)
 
 
-# Once the bot is ready, it will print its name!
-@client.event
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+@bot.event
 async def on_ready():
-    print(f'We have logged in as {client.user}')
+    print(f'{bot.user} olarak giriş yaptık')
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Bro {bot.user}! ben seninim!')
+
+@bot.group()
+async def cool(ctx):
+    """Says if a user is cool.
+
+    In reality this just checks if a subcommand is being invoked.
+    """
+    if ctx.invoked_subcommand is None:
+        await ctx.send(f'No, {ctx.subcommand_passed} is not cool')
 
 
-# When the bot receives a message, it will send messages in the same channel!
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hi! I am a bot!')
-    elif message.content.startswith('$smile'):
-        await message.channel.send(gen_emodji())
-    elif message.content.startswith('$coin'):
-        await message.channel.send(flip_coin())
-    elif message.content.startswith('$pass'):
-        await message.channel.send(gen_pass(10))
-    else:
-        await message.channel.send("Can't process this command, sorry!")
-
-client.run(settings["TOKEN"])
+bot.run("TOKEN BURADA")
